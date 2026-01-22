@@ -1,0 +1,202 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Infinity Risk</title>
+<link href="https://fonts.googleapis.com/css2?family=Orbitron:wght@700&family=Rajdhani:wght@400;700&display=swap" rel="stylesheet">
+<style>
+  /* --- Basic Reset & Body --- */
+  * { margin:0; padding:0; box-sizing:border-box; font-family: 'Rajdhani', sans-serif; }
+  body {
+    background: #0b0c1f;
+    color: #fff;
+    overflow-x: hidden;
+    height: 100vh;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+  }
+  /* --- Particle Background --- */
+  #particles {
+    position: fixed;
+    top:0; left:0; width:100%; height:100%;
+    z-index: -1;
+    background: #0b0c1f;
+  }
+  /* --- Container --- */
+  .calculator-container {
+    backdrop-filter: blur(12px);
+    background: rgba(255,255,255,0.05);
+    border: 1px solid #00f0ff;
+    border-radius: 20px;
+    padding: 40px;
+    width: 350px;
+    text-align: center;
+    box-shadow: 0 0 20px rgba(0,255,255,0.3);
+    animation: fadeSlide 1s ease forwards;
+  }
+  @keyframes fadeSlide {
+    from { opacity:0; transform: translateY(30px); }
+    to { opacity:1; transform: translateY(0); }
+  }
+  /* --- Header --- */
+  h1 {
+    font-family: 'Orbitron', sans-serif;
+    color: #00f0ff;
+    font-size: 2em;
+    margin-bottom: 5px;
+  }
+  h2 {
+    font-size: 1em;
+    color: #c100ff;
+    margin-bottom: 20px;
+  }
+  /* --- Inputs --- */
+  input, select {
+    width: 100%;
+    padding: 12px;
+    margin: 10px 0;
+    border-radius: 10px;
+    border: 1px solid #00f0ff;
+    background: rgba(255,255,255,0.05);
+    color: #fff;
+    font-size: 1em;
+    outline: none;
+    transition: 0.3s all;
+  }
+  input:focus, select:focus {
+    border-color: #c100ff;
+    box-shadow: 0 0 10px #c100ff;
+  }
+  /* --- Buttons --- */
+  button {
+    padding: 12px 20px;
+    margin-top: 15px;
+    background: linear-gradient(90deg,#00f0ff,#c100ff);
+    border: none;
+    border-radius: 10px;
+    color: #000;
+    font-weight: bold;
+    font-size: 1em;
+    cursor: pointer;
+    transition: 0.3s all;
+    box-shadow: 0 0 10px #00f0ff;
+  }
+  button:hover {
+    box-shadow: 0 0 20px #c100ff;
+    transform: scale(1.05);
+  }
+  /* --- Output --- */
+  .output {
+    margin-top: 20px;
+    font-size: 1.5em;
+    color: #00f0ff;
+    min-height: 40px;
+    animation: rollNum 0.5s ease-in-out;
+  }
+  @keyframes rollNum {
+    0% { transform: translateY(20px); opacity:0; }
+    100% { transform: translateY(0); opacity:1; }
+  }
+  /* --- Footer --- */
+  footer {
+    margin-top: 30px;
+    font-size: 0.8em;
+    color: #888;
+  }
+</style>
+</head>
+<body>
+
+<canvas id="particles"></canvas>
+
+<div class="calculator-container">
+  <h1>∞ Infinity Risk</h1>
+  <h2>Next-Level Forex Risk Management</h2>
+
+  <input type="number" id="balance" placeholder="Account Balance">
+  <input type="number" id="risk" placeholder="Risk %">
+  <input type="number" id="stoploss" placeholder="Stop Loss (pips)">
+  <select id="pair">
+    <option value="1">EUR/USD</option>
+    <option value="1">GBP/USD</option>
+    <option value="1">USD/JPY</option>
+  </select>
+
+  <button onclick="calculateLot()">Calculate Lot Size</button>
+
+  <div class="output" id="lotOutput"></div>
+  <div class="output" id="riskOutput"></div>
+
+  <footer>© 2026 Infinity Risk</footer>
+</div>
+
+<script>
+  // --- Lot Size Calculation ---
+  function calculateLot() {
+    const balance = parseFloat(document.getElementById('balance').value) || 0;
+    const riskPercent = parseFloat(document.getElementById('risk').value) || 0;
+    const stopLoss = parseFloat(document.getElementById('stoploss').value) || 1;
+    const pairRate = parseFloat(document.getElementById('pair').value) || 1;
+
+    const riskAmount = balance * (riskPercent / 100);
+    const lotSize = riskAmount / (stopLoss * 10); // simplified calculation
+
+    animateOutput('lotOutput', lotSize.toFixed(2));
+    animateOutput('riskOutput', "Risk Amount: $" + riskAmount.toFixed(2));
+  }
+
+  function animateOutput(id, value) {
+    const el = document.getElementById(id);
+    let current = 0;
+    const target = parseFloat(value.replace(/[^0-9.]/g,''));
+    const increment = target / 50;
+    let count = 0;
+    const interval = setInterval(()=>{
+      count++;
+      current += increment;
+      if(count>=50) { current=target; clearInterval(interval); }
+      el.textContent = value.includes('$') ? "Risk Amount: $" + current.toFixed(2) : current.toFixed(2);
+    },10);
+  }
+
+  // --- Particle Background ---
+  const canvas = document.getElementById('particles');
+  const ctx = canvas.getContext('2d');
+  canvas.width = window.innerWidth;
+  canvas.height = window.innerHeight;
+
+  const particles = [];
+  for(let i=0;i<100;i++){
+    particles.push({
+      x: Math.random()*canvas.width,
+      y: Math.random()*canvas.height,
+      r: Math.random()*2+1,
+      dx: (Math.random()-0.5)*0.5,
+      dy: (Math.random()-0.5)*0.5
+    });
+  }
+
+  function animateParticles(){
+    ctx.clearRect(0,0,canvas.width,canvas.height);
+    particles.forEach(p=>{
+      ctx.beginPath();
+      ctx.arc(p.x,p.y,p.r,0,Math.PI*2);
+      ctx.fillStyle = "#00f0ff";
+      ctx.fill();
+      p.x += p.dx; p.y += p.dy;
+      if(p.x<0||p.x>canvas.width)p.dx*=-1;
+      if(p.y<0||p.y>canvas.height)p.dy*=-1;
+    });
+    requestAnimationFrame(animateParticles);
+  }
+  animateParticles();
+
+  window.addEventListener('resize',()=>{
+    canvas.width = window.innerWidth;
+    canvas.height = window.innerHeight;
+  });
+</script>
+</body>
+</html>
