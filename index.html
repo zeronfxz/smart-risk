@@ -3,200 +3,397 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>Infinity Risk</title>
-<link href="https://fonts.googleapis.com/css2?family=Orbitron:wght@700&family=Rajdhani:wght@400;700&display=swap" rel="stylesheet">
+<title>LUMORA — AI Photoshoot Studio</title>
 <style>
-  /* --- Basic Reset & Body --- */
-  * { margin:0; padding:0; box-sizing:border-box; font-family: 'Rajdhani', sans-serif; }
-  body {
-    background: #0b0c1f;
-    color: #fff;
-    overflow-x: hidden;
-    height: 100vh;
-    display: flex;
-    justify-content: center;
-    align-items: center;
-  }
-  /* --- Particle Background --- */
-  #particles {
-    position: fixed;
-    top:0; left:0; width:100%; height:100%;
-    z-index: -1;
-    background: #0b0c1f;
-  }
-  /* --- Container --- */
-  .calculator-container {
-    backdrop-filter: blur(12px);
-    background: rgba(255,255,255,0.05);
-    border: 1px solid #00f0ff;
-    border-radius: 20px;
-    padding: 40px;
-    width: 350px;
-    text-align: center;
-    box-shadow: 0 0 20px rgba(0,255,255,0.3);
-    animation: fadeSlide 1s ease forwards;
-  }
-  @keyframes fadeSlide {
-    from { opacity:0; transform: translateY(30px); }
-    to { opacity:1; transform: translateY(0); }
-  }
-  /* --- Header --- */
-  h1 {
-    font-family: 'Orbitron', sans-serif;
-    color: #00f0ff;
-    font-size: 2em;
-    margin-bottom: 5px;
-  }
-  h2 {
-    font-size: 1em;
-    color: #c100ff;
-    margin-bottom: 20px;
-  }
-  /* --- Inputs --- */
-  input, select {
-    width: 100%;
-    padding: 12px;
-    margin: 10px 0;
-    border-radius: 10px;
-    border: 1px solid #00f0ff;
-    background: rgba(255,255,255,0.05);
-    color: #fff;
-    font-size: 1em;
-    outline: none;
-    transition: 0.3s all;
-  }
-  input:focus, select:focus {
-    border-color: #c100ff;
-    box-shadow: 0 0 10px #c100ff;
-  }
-  /* --- Buttons --- */
-  button {
-    padding: 12px 20px;
-    margin-top: 15px;
-    background: linear-gradient(90deg,#00f0ff,#c100ff);
-    border: none;
-    border-radius: 10px;
-    color: #000;
-    font-weight: bold;
-    font-size: 1em;
-    cursor: pointer;
-    transition: 0.3s all;
-    box-shadow: 0 0 10px #00f0ff;
-  }
-  button:hover {
-    box-shadow: 0 0 20px #c100ff;
-    transform: scale(1.05);
-  }
-  /* --- Output --- */
-  .output {
-    margin-top: 20px;
-    font-size: 1.5em;
-    color: #00f0ff;
-    min-height: 40px;
-    animation: rollNum 0.5s ease-in-out;
-  }
-  @keyframes rollNum {
-    0% { transform: translateY(20px); opacity:0; }
-    100% { transform: translateY(0); opacity:1; }
-  }
-  /* --- Footer --- */
-  footer {
-    margin-top: 30px;
-    font-size: 0.8em;
-    color: #888;
-  }
+/* ============ RESET & BASE ============ */
+*{margin:0;padding:0;box-sizing:border-box}
+:root{
+  --bg:#0a0a0f;
+  --bg2:#101018;
+  --gold:#d4af37;
+  --gold-light:#f5e7b8;
+  --text:#f4f4f5;
+  --muted:#9a9aa5;
+  --accent:#c9a227;
+  --card:#15151f;
+}
+html{scroll-behavior:smooth}
+body{
+  font-family:'Helvetica Neue',Arial,sans-serif;
+  background:var(--bg);
+  color:var(--text);
+  overflow-x:hidden;
+  line-height:1.6;
+}
+::selection{background:var(--gold);color:#000}
+::-webkit-scrollbar{width:9px}
+::-webkit-scrollbar-track{background:#0a0a0f}
+::-webkit-scrollbar-thumb{background:linear-gradient(var(--gold),var(--accent));border-radius:10px}
+
+h1,h2,h3{font-weight:300;letter-spacing:2px}
+a{text-decoration:none;color:inherit}
+
+/* ============ CUSTOM CURSOR ============ */
+.cursor{position:fixed;width:8px;height:8px;background:var(--gold);border-radius:50%;pointer-events:none;z-index:9999;transform:translate(-50%,-50%);transition:width .25s,height .25s,background .25s}
+.cursor-ring{position:fixed;width:38px;height:38px;border:1px solid rgba(212,175,55,.5);border-radius:50%;pointer-events:none;z-index:9999;transform:translate(-50%,-50%);transition:width .3s,height .3s,border-color .3s}
+.cursor.hover{width:0;height:0}
+.cursor-ring.hover{width:60px;height:60px;border-color:var(--gold);background:rgba(212,175,55,.08)}
+@media(max-width:900px){.cursor,.cursor-ring{display:none}}
+
+/* ============ PRELOADER ============ */
+#preloader{position:fixed;inset:0;background:var(--bg);z-index:10000;display:flex;align-items:center;justify-content:center;flex-direction:column;transition:opacity .8s,visibility .8s}
+#preloader.done{opacity:0;visibility:hidden}
+.loader-text{font-size:clamp(2rem,8vw,5rem);font-weight:200;letter-spacing:.5rem;background:linear-gradient(90deg,#333 0%,#333 40%,var(--gold) 50%,#333 60%,#333 100%);background-size:200% auto;-webkit-background-clip:text;background-clip:text;-webkit-text-fill-color:transparent;animation:shine 2s linear infinite}
+@keyframes shine{to{background-position:-200% center}}
+.loader-bar{margin-top:30px;width:200px;height:1px;background:#222;position:relative;overflow:hidden}
+.loader-bar::after{content:'';position:absolute;left:0;top:0;height:100%;width:0;background:var(--gold);animation:load 2.2s ease forwards}
+@keyframes load{to{width:100%}}
+
+/* ============ NAVBAR ============ */
+nav{position:fixed;top:0;left:0;width:100%;padding:25px 6vw;display:flex;justify-content:space-between;align-items:center;z-index:1000;transition:all .5s;mix-blend-mode:difference}
+nav.scrolled{padding:15px 6vw;background:rgba(10,10,15,.85);backdrop-filter:blur(12px);mix-blend-mode:normal;border-bottom:1px solid rgba(212,175,55,.15)}
+.logo{font-size:1.4rem;font-weight:300;letter-spacing:5px}
+.logo span{color:var(--gold)}
+.nav-links{display:flex;gap:40px;list-style:none}
+.nav-links a{position:relative;font-size:.85rem;letter-spacing:2px;text-transform:uppercase;color:var(--text);transition:color .3s}
+.nav-links a::after{content:'';position:absolute;bottom:-5px;left:0;width:0;height:1px;background:var(--gold);transition:width .4s}
+.nav-links a:hover{color:var(--gold)}
+.nav-links a:hover::after{width:100%}
+.burger{display:none;flex-direction:column;gap:6px;cursor:pointer}
+.burger span{width:28px;height:2px;background:var(--text);transition:.4s}
+.burger.active span:nth-child(1){transform:rotate(45deg) translate(6px,6px)}
+.burger.active span:nth-child(2){opacity:0}
+.burger.active span:nth-child(3){transform:rotate(-45deg) translate(6px,-6px)}
+@media(max-width:900px){
+  .nav-links{position:fixed;top:0;right:-100%;height:100vh;width:70%;background:var(--bg2);flex-direction:column;justify-content:center;align-items:center;gap:30px;transition:right .5s;border-left:1px solid rgba(212,175,55,.2)}
+  .nav-links.open{right:0}
+  .burger{display:flex;z-index:1001}
+  nav{mix-blend-mode:normal}
+}
+
+/* ============ HERO ============ */
+.hero{height:100vh;display:flex;align-items:center;justify-content:center;position:relative;overflow:hidden}
+.hero-bg{position:absolute;inset:0;background:radial-gradient(circle at 30% 40%,rgba(212,175,55,.12),transparent 50%),radial-gradient(circle at 70% 70%,rgba(100,80,200,.1),transparent 50%),var(--bg)}
+.hero-grid{position:absolute;inset:0;background-image:linear-gradient(rgba(212,175,55,.04) 1px,transparent 1px),linear-gradient(90deg,rgba(212,175,55,.04) 1px,transparent 1px);background-size:60px 60px;animation:gridMove 20s linear infinite}
+@keyframes gridMove{to{background-position:60px 60px}}
+.orb{position:absolute;border-radius:50%;filter:blur(80px);opacity:.5}
+.orb1{width:400px;height:400px;background:radial-gradient(circle,var(--gold),transparent 70%);top:10%;left:-5%;animation:float1 12s ease-in-out infinite}
+.orb2{width:350px;height:350px;background:radial-gradient(circle,#6a5acd,transparent 70%);bottom:5%;right:-5%;animation:float2 15s ease-in-out infinite}
+@keyframes float1{50%{transform:translate(60px,40px)}}
+@keyframes float2{50%{transform:translate(-50px,-30px)}}
+.hero-content{text-align:center;z-index:2;position:relative}
+.hero-tag{font-size:.8rem;letter-spacing:8px;text-transform:uppercase;color:var(--gold);margin-bottom:25px;opacity:0;animation:fadeUp 1s .6s forwards}
+.hero h1{font-size:clamp(2.5rem,9vw,8rem);font-weight:200;line-height:1;letter-spacing:0}
+.hero h1 .word{display:inline-block;opacity:0;transform:translateY(60px);animation:wordUp .9s forwards}
+.hero h1 .gold{background:linear-gradient(135deg,var(--gold-light),var(--gold),var(--accent));-webkit-background-clip:text;background-clip:text;-webkit-text-fill-color:transparent}
+.hero p{max-width:600px;margin:30px auto 40px;color:var(--muted);font-size:1.05rem;letter-spacing:1px;opacity:0;animation:fadeUp 1s 1.2s forwards}
+.hero-cta{opacity:0;animation:fadeUp 1s 1.5s forwards}
+@keyframes wordUp{to{opacity:1;transform:translateY(0)}}
+@keyframes fadeUp{to{opacity:1;transform:translateY(0)}}
+.btn{display:inline-block;padding:16px 45px;border:1px solid var(--gold);color:var(--gold);letter-spacing:3px;text-transform:uppercase;font-size:.8rem;position:relative;overflow:hidden;transition:color .4s;z-index:1}
+.btn::before{content:'';position:absolute;inset:0;background:var(--gold);transform:scaleX(0);transform-origin:left;transition:transform .4s;z-index:-1}
+.btn:hover{color:#000}
+.btn:hover::before{transform:scaleX(1)}
+.scroll-ind{position:absolute;bottom:30px;left:50%;transform:translateX(-50%);font-size:.7rem;letter-spacing:3px;color:var(--muted);text-align:center}
+.scroll-ind .line{width:1px;height:50px;background:linear-gradient(var(--gold),transparent);margin:10px auto 0;position:relative;overflow:hidden}
+.scroll-ind .line::after{content:'';position:absolute;top:-50%;left:0;width:100%;height:50%;background:var(--gold);animation:scrollDown 2s ease infinite}
+@keyframes scrollDown{to{top:100%}}
+
+/* ============ SECTION GENERIC ============ */
+section{padding:120px 6vw;position:relative}
+.section-head{text-align:center;margin-bottom:80px}
+.section-head .num{font-size:.8rem;letter-spacing:4px;color:var(--gold);display:block;margin-bottom:15px}
+.section-head h2{font-size:clamp(2rem,5vw,3.5rem);font-weight:200}
+.reveal{opacity:0;transform:translateY(50px);transition:all 1s cubic-bezier(.16,1,.3,1)}
+.reveal.in{opacity:1;transform:translateY(0)}
+
+/* ============ MARQUEE ============ */
+.marquee{padding:40px 0;border-top:1px solid rgba(212,175,55,.15);border-bottom:1px solid rgba(212,175,55,.15);overflow:hidden;white-space:nowrap;background:var(--bg2)}
+.marquee-track{display:inline-block;animation:marquee 25s linear infinite}
+.marquee-track span{font-size:2.5rem;font-weight:200;letter-spacing:4px;margin:0 40px;color:transparent;-webkit-text-stroke:1px var(--gold)}
+.marquee-track span:nth-child(even){color:var(--text);-webkit-text-stroke:0}
+@keyframes marquee{to{transform:translateX(-50%)}}
+
+/* ============ SERVICES GRID ============ */
+.services-grid{display:grid;grid-template-columns:repeat(auto-fit,minmax(300px,1fr));gap:25px}
+.service-card{position:relative;height:420px;border-radius:6px;overflow:hidden;cursor:pointer;background:var(--card);border:1px solid rgba(255,255,255,.06)}
+.service-card .visual{position:absolute;inset:0;transition:transform .8s cubic-bezier(.16,1,.3,1)}
+.service-card:hover .visual{transform:scale(1.08)}
+.service-card .overlay{position:absolute;inset:0;background:linear-gradient(to top,rgba(10,10,15,.95) 0%,rgba(10,10,15,.3) 60%,transparent 100%);z-index:2}
+.service-card .content{position:absolute;bottom:0;left:0;padding:35px;z-index:3;transition:transform .5s}
+.service-card .content .icon{font-size:2rem;margin-bottom:15px;display:block}
+.service-card h3{font-size:1.5rem;letter-spacing:2px;margin-bottom:8px}
+.service-card .desc{color:var(--muted);font-size:.9rem;max-height:0;overflow:hidden;opacity:0;transition:all .5s}
+.service-card:hover .desc{max-height:80px;opacity:1;margin-top:10px}
+.service-card .tag{position:absolute;top:25px;right:25px;font-size:.7rem;letter-spacing:2px;color:var(--gold);border:1px solid var(--gold);padding:5px 12px;border-radius:20px;z-index:3}
+.v-perfume{background:radial-gradient(circle at 50% 30%,#3a2a1a,#1a1208),conic-gradient(from 0deg at 50% 70%,#d4af37 0deg,transparent 60deg)}
+.v-clothing{background:linear-gradient(135deg,#2a2a3a,#15151f),repeating-linear-gradient(45deg,rgba(212,175,55,.05) 0 10px,transparent 10px 20px)}
+.v-sunglasses{background:radial-gradient(ellipse at 30% 40%,#1a3a4a,#0a1a22),radial-gradient(circle at 70% 60%,rgba(212,175,55,.2),transparent 40%)}
+.v-watches{background:conic-gradient(from 180deg at 50% 40%,#2a2418,#3a3020,#2a2418),radial-gradient(circle at 50% 40%,rgba(212,175,55,.3),transparent 50%)}
+.v-skincare{background:linear-gradient(160deg,#1a3028,#0f1f1a),radial-gradient(circle at 60% 30%,rgba(150,220,180,.15),transparent 50%)}
+.v-jewelry{background:radial-gradient(circle at 50% 50%,#3a2a3a,#15101a),conic-gradient(from 90deg at 50% 50%,transparent,rgba(212,175,55,.25),transparent)}
+.v-cosmetics{background:linear-gradient(135deg,#3a1a2a,#1f0f18),radial-gradient(circle at 30% 70%,rgba(255,100,150,.2),transparent 50%)}
+.v-glow{position:absolute;width:120px;height:120px;border-radius:50%;background:radial-gradient(circle,rgba(212,175,55,.4),transparent 70%);top:35%;left:50%;transform:translateX(-50%);filter:blur(20px);animation:pulse 4s ease-in-out infinite}
+@keyframes pulse{50%{transform:translateX(-50%) scale(1.3);opacity:.6}}
+
+/* ============ PROCESS / STATS ============ */
+.process{display:grid;grid-template-columns:repeat(auto-fit,minmax(220px,1fr));gap:40px;margin-top:40px}
+.step{text-align:center;padding:40px 20px;border:1px solid rgba(255,255,255,.06);border-radius:6px;transition:all .5s;position:relative;overflow:hidden}
+.step:hover{border-color:var(--gold);transform:translateY(-10px)}
+.step::before{content:'';position:absolute;inset:0;background:linear-gradient(135deg,rgba(212,175,55,.08),transparent);opacity:0;transition:.5s}
+.step:hover::before{opacity:1}
+.step .big{font-size:3rem;font-weight:200;color:var(--gold);display:block;margin-bottom:15px}
+.step h4{letter-spacing:2px;margin-bottom:10px;text-transform:uppercase;font-size:1rem}
+.step p{color:var(--muted);font-size:.88rem}
+
+.stats{display:flex;flex-wrap:wrap;justify-content:space-around;gap:30px;margin-top:60px;text-align:center}
+.stat .count{font-size:clamp(2.5rem,6vw,4.5rem);font-weight:200;background:linear-gradient(var(--gold-light),var(--gold));-webkit-background-clip:text;background-clip:text;-webkit-text-fill-color:transparent}
+.stat .label{letter-spacing:3px;text-transform:uppercase;font-size:.8rem;color:var(--muted)}
+
+/* ============ GALLERY ============ */
+.gallery{columns:3;column-gap:20px}
+@media(max-width:900px){.gallery{columns:2}}
+@media(max-width:600px){.gallery{columns:1}}
+.gallery-item{break-inside:avoid;margin-bottom:20px;border-radius:6px;overflow:hidden;position:relative;cursor:pointer}
+.gallery-item .art{transition:transform .8s;display:flex;align-items:center;justify-content:center;color:rgba(255,255,255,.4);font-size:.8rem;letter-spacing:2px}
+.gallery-item:hover .art{transform:scale(1.1)}
+.gallery-item::after{content:'VIEW';position:absolute;inset:0;background:rgba(10,10,15,.7);color:var(--gold);display:flex;align-items:center;justify-content:center;letter-spacing:4px;opacity:0;transition:.4s}
+.gallery-item:hover::after{opacity:1}
+
+/* ============ CTA / CONTACT ============ */
+.cta-section{text-align:center;background:linear-gradient(180deg,var(--bg),var(--bg2));position:relative;overflow:hidden}
+.cta-section h2{font-size:clamp(2rem,7vw,5rem);font-weight:200;margin-bottom:30px;line-height:1.1}
+.cta-section h2 .gold{color:var(--gold)}
+.form{max-width:600px;margin:50px auto 0;display:grid;gap:20px}
+.form input,.form textarea,.form select{background:transparent;border:1px solid rgba(255,255,255,.15);padding:18px 20px;color:var(--text);font-size:.95rem;letter-spacing:1px;border-radius:4px;transition:border .3s;font-family:inherit}
+.form input:focus,.form textarea:focus,.form select:focus{outline:none;border-color:var(--gold)}
+.form select{appearance:none;cursor:pointer}
+.form select option{background:var(--bg2)}
+.form .btn{border:none;background:var(--gold);color:#000;cursor:pointer;font-family:inherit}
+.form .btn::before{background:var(--gold-light)}
+
+/* ============ FOOTER ============ */
+footer{padding:60px 6vw 40px;border-top:1px solid rgba(212,175,55,.15);text-align:center}
+.foot-logo{font-size:1.5rem;letter-spacing:6px;margin-bottom:20px}
+.foot-logo span{color:var(--gold)}
+.socials{display:flex;justify-content:center;gap:30px;margin:25px 0}
+.socials a{color:var(--muted);letter-spacing:2px;font-size:.8rem;transition:color .3s}
+.socials a:hover{color:var(--gold)}
+.copy{color:#555;font-size:.8rem;letter-spacing:1px;margin-top:25px}
+
+#progress{position:fixed;top:0;left:0;height:3px;background:linear-gradient(90deg,var(--gold),var(--gold-light));z-index:1001;width:0%}
 </style>
 </head>
 <body>
 
-<canvas id="particles"></canvas>
+<div class="cursor"></div>
+<div class="cursor-ring"></div>
+<div id="progress"></div>
 
-<div class="calculator-container">
-  <h1>∞ Infinity Risk</h1>
-  <h2>Next-Level Forex Risk Management</h2>
-
-  <input type="number" id="balance" placeholder="Account Balance">
-  <input type="number" id="risk" placeholder="Risk %">
-  <input type="number" id="stoploss" placeholder="Stop Loss (pips)">
-  <select id="pair">
-    <option value="1">EUR/USD</option>
-    <option value="1">GBP/USD</option>
-    <option value="1">USD/JPY</option>
-  </select>
-
-  <button onclick="calculateLot()">Calculate Lot Size</button>
-
-  <div class="output" id="lotOutput"></div>
-  <div class="output" id="riskOutput"></div>
-
-  <footer>© 2026 Infinity Risk</footer>
+<!-- PRELOADER -->
+<div id="preloader">
+  <div class="loader-text">LUMORA</div>
+  <div class="loader-bar"></div>
 </div>
 
+<!-- NAV -->
+<nav id="nav">
+  <div class="logo">LUM<span>O</span>RA</div>
+  <ul class="nav-links" id="navLinks">
+    <li><a href="#home">Home</a></li>
+    <li><a href="#services">Services</a></li>
+    <li><a href="#process">Process</a></li>
+    <li><a href="#gallery">Gallery</a></li>
+    <li><a href="#contact">Contact</a></li>
+  </ul>
+  <div class="burger" id="burger"><span></span><span></span><span></span></div>
+</nav>
+
+<!-- HERO -->
+<header class="hero" id="home">
+  <div class="hero-bg"></div>
+  <div class="hero-grid"></div>
+  <div class="orb orb1"></div>
+  <div class="orb orb2"></div>
+  <div class="hero-content">
+    <div class="hero-tag">AI-Powered Product Photography</div>
+    <h1>
+      <span class="word" style="animation-delay:.2s">Stunning</span>
+      <span class="word gold" style="animation-delay:.4s">Visuals</span><br>
+      <span class="word" style="animation-delay:.6s">Without</span>
+      <span class="word" style="animation-delay:.8s">Limits</span>
+    </h1>
+    <p>LUMORA crafts luxury, scroll-stopping product photoshoots for premium brands — generated by next-generation AI, delivered with cinematic perfection.</p>
+    <div class="hero-cta"><a href="#contact" class="btn" data-hover>Book a Shoot</a></div>
+  </div>
+  <div class="scroll-ind">SCROLL<div class="line"></div></div>
+</header>
+
+<!-- MARQUEE -->
+<div class="marquee">
+  <div class="marquee-track">
+    <span>PERFUME</span><span>CLOTHING</span><span>SUNGLASSES</span><span>WATCHES</span><span>SKINCARE</span><span>JEWELRY</span><span>COSMETICS</span>
+    <span>PERFUME</span><span>CLOTHING</span><span>SUNGLASSES</span><span>WATCHES</span><span>SKINCARE</span><span>JEWELRY</span><span>COSMETICS</span>
+  </div>
+</div>
+
+<!-- SERVICES -->
+<section id="services">
+  <div class="section-head reveal">
+    <span class="num">01 — WHAT WE SHOOT</span>
+    <h2>Our Specialties</h2>
+  </div>
+  <div class="services-grid">
+    <article class="service-card reveal" data-hover>
+      <div class="visual v-perfume"><div class="v-glow"></div></div>
+      <div class="overlay"></div><span class="tag">01</span>
+      <div class="content"><span class="icon">🌸</span><h3>Perfume</h3><p class="desc">Luxurious fragrance bottles with dramatic light, reflections & atmospheric mood.</p></div>
+    </article>
+    <article class="service-card reveal" data-hover>
+      <div class="visual v-clothing"><div class="v-glow"></div></div>
+      <div class="overlay"></div><span class="tag">02</span>
+      <div class="content"><span class="icon">👗</span><h3>Clothing Brands</h3><p class="desc">Editorial fashion shots with AI models & lifestyle scenes for your apparel.</p></div>
+    </article>
+    <article class="service-card reveal" data-hover>
+      <div class="visual v-sunglasses"><div class="v-glow"></div></div>
+      <div class="overlay"></div><span class="tag">03</span>
+      <div class="content"><span class="icon">🕶️</span><h3>Sunglasses</h3><p class="desc">Sleek eyewear with crisp reflections, lens flares & premium styling.</p></div>
+    </article>
+    <article class="service-card reveal" data-hover>
+      <div class="visual v-watches"><div class="v-glow"></div></div>
+      <div class="overlay"></div><span class="tag">04</span>
+      <div class="content"><span class="icon">⌚</span><h3>Watches</h3><p class="desc">Macro detail, water splashes & metallic shine that sells luxury timepieces.</p></div>
+    </article>
+    <article class="service-card reveal" data-hover>
+      <div class="visual v-skincare"><div class="v-glow"></div></div>
+      <div class="overlay"></div><span class="tag">05</span>
+      <div class="content"><span class="icon">🧴</span><h3>Skincare</h3><p class="desc">Clean, fresh & natural compositions that radiate purity and trust.</p></div>
+    </article>
+    <article class="service-card reveal" data-hover>
+      <div class="visual v-jewelry"><div class="v-glow"></div></div>
+      <div class="overlay"></div><span class="tag">06</span>
+      <div class="content"><span class="icon">💎</span><h3>Jewelry</h3><p class="desc">Sparkling diamonds & gold with hyper-detailed elegance on rich backdrops.</p></div>
+    </article>
+    <article class="service-card reveal" data-hover>
+      <div class="visual v-cosmetics"><div class="v-glow"></div></div>
+      <div class="overlay"></div><span class="tag">07</span>
+      <div class="content"><span class="icon">💄</span><h3>Cosmetics</h3><p class="desc">Bold, colorful & glamorous beauty shots with powder splashes & shine.</p></div>
+    </article>
+  </div>
+</section>
+
+<!-- PROCESS -->
+<section id="process">
+  <div class="section-head reveal">
+    <span class="num">02 — HOW IT WORKS</span>
+    <h2>The Process</h2>
+  </div>
+  <div class="process">
+    <div class="step reveal"><span class="big">01</span><h4>Brief</h4><p>Share your product, brand vibe & references with us.</p></div>
+    <div class="step reveal"><span class="big">02</span><h4>Concept</h4><p>We design AI scenes, lighting & mood tailored to your brand.</p></div>
+    <div class="step reveal"><span class="big">03</span><h4>Generate</h4><p>We craft and refine high-resolution cinematic visuals.</p></div>
+    <div class="step reveal"><span class="big">04</span><h4>Deliver</h4><p>Receive polished, ready-to-publish images in 48 hours.</p></div>
+  </div>
+  <div class="stats">
+    <div class="stat reveal"><span class="count" data-target="500">0</span><span class="label">Projects</span></div>
+    <div class="stat reveal"><span class="count" data-target="120">0</span><span class="label">Brands</span></div>
+    <div class="stat reveal"><span class="count" data-target="48">0</span><span class="label">Hr Delivery</span></div>
+    <div class="stat reveal"><span class="count" data-target="100">0</span><span class="label">% Custom</span></div>
+  </div>
+</section>
+
+<!-- GALLERY -->
+<section id="gallery">
+  <div class="section-head reveal">
+    <span class="num">03 — SELECTED WORK</span>
+    <h2>Gallery</h2>
+  </div>
+  <div class="gallery" id="gallery"></div>
+</section>
+
+<!-- CTA / CONTACT -->
+<section class="cta-section" id="contact">
+  <div class="orb orb1" style="opacity:.25"></div>
+  <div class="reveal">
+    <h2>Let's Create<br>Something <span class="gold">Iconic</span></h2>
+    <p style="color:var(--muted);letter-spacing:1px">Tell us about your product. LUMORA replies within 24 hours.</p>
+    <form class="form" onsubmit="submitForm(event)">
+      <input type="text" placeholder="Your Name" required>
+      <input type="email" placeholder="Email Address" required>
+      <select required>
+        <option value="">Select Category</option>
+        <option>Perfume</option><option>Clothing Brand</option><option>Sunglasses</option>
+        <option>Watches</option><option>Skincare</option><option>Jewelry</option><option>Cosmetics</option>
+      </select>
+      <textarea rows="4" placeholder="Tell us about your project..."></textarea>
+      <button type="submit" class="btn" data-hover>Send Inquiry</button>
+    </form>
+  </div>
+</section>
+
+<!-- FOOTER -->
+<footer>
+  <div class="foot-logo">LUM<span>O</span>RA</div>
+  <p style="color:var(--muted);letter-spacing:2px">AI Photoshoot Studio · Crafting Premium Brand Visuals</p>
+  <div class="socials">
+    <a href="#" data-hover>INSTAGRAM</a><a href="#" data-hover>BEHANCE</a>
+    <a href="#" data-hover>TIKTOK</a><a href="#" data-hover>EMAIL</a>
+  </div>
+  <p class="copy">© 2025 LUMORA Studio. All rights reserved.</p>
+</footer>
+
 <script>
-  // --- Lot Size Calculation ---
-  function calculateLot() {
-    const balance = parseFloat(document.getElementById('balance').value) || 0;
-    const riskPercent = parseFloat(document.getElementById('risk').value) || 0;
-    const stopLoss = parseFloat(document.getElementById('stoploss').value) || 1;
-    const pairRate = parseFloat(document.getElementById('pair').value) || 1;
+/* PRELOADER */
+window.addEventListener('load',()=>{setTimeout(()=>document.getElementById('preloader').classList.add('done'),2200)});
 
-    const riskAmount = balance * (riskPercent / 100);
-    const lotSize = riskAmount / (stopLoss * 10); // simplified calculation
+/* CUSTOM CURSOR */
+const cursor=document.querySelector('.cursor'),ring=document.querySelector('.cursor-ring');
+let mx=0,my=0,rx=0,ry=0;
+document.addEventListener('mousemove',e=>{mx=e.clientX;my=e.clientY;cursor.style.left=mx+'px';cursor.style.top=my+'px'});
+function ringFollow(){rx+=(mx-rx)*.15;ry+=(my-ry)*.15;ring.style.left=rx+'px';ring.style.top=ry+'px';requestAnimationFrame(ringFollow)}ringFollow();
+document.querySelectorAll('[data-hover],a,button').forEach(el=>{
+  el.addEventListener('mouseenter',()=>{cursor.classList.add('hover');ring.classList.add('hover')});
+  el.addEventListener('mouseleave',()=>{cursor.classList.remove('hover');ring.classList.remove('hover')});
+});
 
-    animateOutput('lotOutput', lotSize.toFixed(2));
-    animateOutput('riskOutput', "Risk Amount: $" + riskAmount.toFixed(2));
-  }
+/* NAV SCROLL + PROGRESS */
+const nav=document.getElementById('nav');
+window.addEventListener('scroll',()=>{
+  nav.classList.toggle('scrolled',scrollY>60);
+  const h=document.documentElement;
+  document.getElementById('progress').style.width=(h.scrollTop)/(h.scrollHeight-h.clientHeight)*100+'%';
+});
 
-  function animateOutput(id, value) {
-    const el = document.getElementById(id);
-    let current = 0;
-    const target = parseFloat(value.replace(/[^0-9.]/g,''));
-    const increment = target / 50;
-    let count = 0;
-    const interval = setInterval(()=>{
-      count++;
-      current += increment;
-      if(count>=50) { current=target; clearInterval(interval); }
-      el.textContent = value.includes('$') ? "Risk Amount: $" + current.toFixed(2) : current.toFixed(2);
-    },10);
-  }
+/* BURGER */
+const burger=document.getElementById('burger'),links=document.getElementById('navLinks');
+burger.addEventListener('click',()=>{burger.classList.toggle('active');links.classList.toggle('open')});
+links.querySelectorAll('a').forEach(a=>a.addEventListener('click',()=>{burger.classList.remove('active');links.classList.remove('open')}));
 
-  // --- Particle Background ---
-  const canvas = document.getElementById('particles');
-  const ctx = canvas.getContext('2d');
-  canvas.width = window.innerWidth;
-  canvas.height = window.innerHeight;
+/* REVEAL */
+const io=new IntersectionObserver(entries=>{
+  entries.forEach((e,i)=>{if(e.isIntersecting){setTimeout(()=>e.target.classList.add('in'),(i%4)*120);io.unobserve(e.target)}})
+},{threshold:.15});
+document.querySelectorAll('.reveal').forEach(el=>io.observe(el));
 
-  const particles = [];
-  for(let i=0;i<100;i++){
-    particles.push({
-      x: Math.random()*canvas.width,
-      y: Math.random()*canvas.height,
-      r: Math.random()*2+1,
-      dx: (Math.random()-0.5)*0.5,
-      dy: (Math.random()-0.5)*0.5
-    });
-  }
+/* COUNTERS */
+const cObs=new IntersectionObserver(es=>{
+  es.forEach(e=>{if(e.isIntersecting){const el=e.target,t=+el.dataset.target;let n=0;
+    const step=()=>{n+=Math.ceil(t/60);if(n>=t){el.textContent=t;return}el.textContent=n;requestAnimationFrame(step)};step();cObs.unobserve(el);}});
+},{threshold:.5});
+document.querySelectorAll('.count').forEach(c=>cObs.observe(c));
 
-  function animateParticles(){
-    ctx.clearRect(0,0,canvas.width,canvas.height);
-    particles.forEach(p=>{
-      ctx.beginPath();
-      ctx.arc(p.x,p.y,p.r,0,Math.PI*2);
-      ctx.fillStyle = "#00f0ff";
-      ctx.fill();
-      p.x += p.dx; p.y += p.dy;
-      if(p.x<0||p.x>canvas.width)p.dx*=-1;
-      if(p.y<0||p.y>canvas.height)p.dy*=-1;
-    });
-    requestAnimationFrame(animateParticles);
-  }
-  animateParticles();
+/* GALLERY */
+const cats=[['Perfume','v-perfume',280],['Watches','v-watches',360],['Jewelry','v-jewelry',300],['Clothing','v-clothing',340],['Cosmetics','v-cosmetics',290],['Sunglasses','v-sunglasses',330],['Skincare','v-skincare',310],['Perfume','v-perfume',350],['Jewelry','v-jewelry',270]];
+const g=document.getElementById('gallery');
+cats.forEach(([label,cls,h])=>{const d=document.createElement('div');d.className='gallery-item';d.setAttribute('data-hover','');d.innerHTML=`<div class="art ${cls}" style="height:${h}px"><span>${label.toUpperCase()}</span></div>`;g.appendChild(d)});
 
-  window.addEventListener('resize',()=>{
-    canvas.width = window.innerWidth;
-    canvas.height = window.innerHeight;
-  });
+/* PARALLAX */
+document.addEventListener('mousemove',e=>{const x=(e.clientX/innerWidth-.5),y=(e.clientY/innerHeight-.5);
+  document.querySelectorAll('.orb1').forEach(o=>o.style.transform=`translate(${x*40}px,${y*40}px)`);
+  document.querySelectorAll('.orb2').forEach(o=>o.style.transform=`translate(${x*-40}px,${y*-40}px)`)});
+
+/* FORM */
+function submitForm(e){e.preventDefault();const b=e.target.querySelector('button');b.textContent='✓ Sent — LUMORA will be in touch!';b.style.background='var(--gold-light)';setTimeout(()=>{e.target.reset();b.innerHTML='Send Inquiry'},2500)}
 </script>
 </body>
 </html>
