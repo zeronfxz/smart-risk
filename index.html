@@ -3,276 +3,211 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
-
-<title>Sora AI Watermark Remover</title>
-
-<link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;600&display=swap" rel="stylesheet">
+<title>PromptFlow.store</title>
 
 <style>
-
 *{
-margin:0;
-padding:0;
-box-sizing:border-box;
-font-family:'Inter',sans-serif;
+    margin:0;
+    padding:0;
+    box-sizing:border-box;
+    scroll-behavior:smooth;
 }
 
 body{
-
-height:100vh;
-display:flex;
-justify-content:center;
-align-items:center;
-background:linear-gradient(135deg,#0f2027,#203a43,#2c5364);
-overflow:hidden;
-color:white;
-
+    font-family:Arial, sans-serif;
+    background:#080b10;
+    color:white;
 }
 
-/* animated glow background */
-
-body::before,
-body::after{
-
-content:"";
-position:absolute;
-width:500px;
-height:500px;
-border-radius:50%;
-filter:blur(120px);
-
+header{
+    position:sticky;
+    top:0;
+    background:rgba(0,0,0,0.8);
+    backdrop-filter:blur(15px);
+    padding:20px;
+    display:flex;
+    justify-content:space-between;
+    align-items:center;
 }
 
-body::before{
-
-background:#00e5ff;
-top:-100px;
-left:-100px;
-
+.logo{
+    color:#6dffb3;
+    font-size:28px;
+    font-weight:bold;
 }
 
-body::after{
-
-background:#4f46e5;
-bottom:-100px;
-right:-100px;
-
+nav a{
+    color:white;
+    text-decoration:none;
+    margin-left:20px;
 }
 
-/* glass card */
-
-.container{
-
-width:480px;
-padding:40px;
-border-radius:22px;
-
-background:rgba(255,255,255,0.07);
-backdrop-filter:blur(25px);
-
-border:1px solid rgba(255,255,255,0.15);
-
-box-shadow:0 30px 80px rgba(0,0,0,.5);
-
-text-align:center;
-
-animation:fade 1s ease;
-
+.hero{
+    min-height:100vh;
+    display:flex;
+    flex-direction:column;
+    justify-content:center;
+    align-items:center;
+    text-align:center;
+    padding:20px;
 }
 
-h1{
-
-font-size:28px;
-margin-bottom:8px;
-font-weight:600;
-
+.hero h1{
+    font-size:60px;
+    margin-bottom:20px;
 }
 
-p{
-
-opacity:.75;
-margin-bottom:30px;
-
+.hero p{
+    max-width:700px;
+    color:#c5c5c5;
+    line-height:1.7;
 }
 
-/* upload box */
-
-.upload{
-
-border:2px dashed rgba(255,255,255,.35);
-padding:40px;
-border-radius:16px;
-
-cursor:pointer;
-transition:.3s;
-
+.btn{
+    display:inline-block;
+    margin-top:30px;
+    padding:15px 30px;
+    background:#6dffb3;
+    color:black;
+    border-radius:50px;
+    text-decoration:none;
+    font-weight:bold;
+    transition:0.3s;
 }
 
-.upload:hover{
-
-background:rgba(255,255,255,0.1);
-transform:scale(1.02);
-
+.btn:hover{
+    transform:translateY(-5px);
 }
 
-.upload input{
-
-display:none;
-
+.section{
+    padding:100px 20px;
+    text-align:center;
 }
 
-/* button */
-
-button{
-
-margin-top:22px;
-padding:14px 32px;
-
-border:none;
-border-radius:30px;
-
-background:linear-gradient(45deg,#00e5ff,#6366f1);
-
-color:white;
-font-size:16px;
-
-cursor:pointer;
-transition:.3s;
-
+.cards{
+    display:grid;
+    grid-template-columns:repeat(auto-fit,minmax(250px,1fr));
+    gap:20px;
+    margin-top:40px;
 }
 
-button:hover{
-
-transform:scale(1.07);
-box-shadow:0 10px 25px rgba(0,0,0,.4);
-
+.card{
+    background:#12161d;
+    border-radius:20px;
+    padding:30px;
+    transition:0.3s;
 }
 
-/* loader */
-
-.progressBox{
-
-margin-top:25px;
-height:6px;
-background:rgba(255,255,255,.15);
-border-radius:10px;
-overflow:hidden;
-
-display:none;
-
+.card:hover{
+    transform:translateY(-10px);
 }
 
-.progress{
-
-height:100%;
-width:0%;
-
-background:linear-gradient(90deg,#00e5ff,#6366f1);
-
-animation:load 5s linear forwards;
-
+.card h2{
+    margin-bottom:15px;
+    color:#6dffb3;
 }
 
-/* preview video */
-
-video{
-
-margin-top:25px;
-width:100%;
-border-radius:12px;
-
-display:none;
-
+footer{
+    text-align:center;
+    padding:40px;
+    color:gray;
 }
-
-/* animations */
-
-@keyframes load{
-
-0%{width:0}
-100%{width:100%}
-
-}
-
-@keyframes fade{
-
-from{
-opacity:0;
-transform:translateY(25px);
-}
-
-to{
-opacity:1;
-transform:translateY(0);
-}
-
-}
-
 </style>
 </head>
 
 <body>
 
-<div class="container">
+<header>
+    <div class="logo">PromptFlow</div>
 
-<h1>Sora Watermark Remover</h1>
-<p>Upload your Sora video and remove watermark instantly</p>
+    <nav>
+        <a href="#prompts">Prompts</a>
+        <a href="#workflows">Workflows</a>
+        <a href="#about">About</a>
+    </nav>
+</header>
 
-<label class="upload">
+<section class="hero">
 
-Click to Upload Video
+    <h1>Free AI Prompts</h1>
 
-<input type="file" id="videoInput" accept="video/*">
+    <p>
+        Discover premium VEO prompts, AI avatar workflows,
+        luxury transformations, product ads, and cinematic scenes—
+        completely free.
+    </p>
 
-</label>
+    <a href="#prompts" class="btn">
+        Browse Prompts
+    </a>
 
-<button onclick="processVideo()">Remove Watermark</button>
+</section>
 
-<div class="progressBox">
-<div class="progress"></div>
-</div>
+<section class="section" id="prompts">
 
-<video id="preview" controls></video>
+    <h1>Popular Prompts</h1>
 
-</div>
+    <div class="cards">
 
-<script>
+        <div class="card">
+            <h2>Luxury Pools</h2>
+            <p>Swimming pool and epoxy transformations.</p>
+        </div>
 
-let uploadedVideo=null;
+        <div class="card">
+            <h2>AI Avatars</h2>
+            <p>Realistic talking AI characters.</p>
+        </div>
 
-document.getElementById("videoInput").addEventListener("change",function(e){
+        <div class="card">
+            <h2>Dragon Lab</h2>
+            <p>Dragon eggs and cinematic laboratory scenes.</p>
+        </div>
 
-uploadedVideo=e.target.files[0];
+    </div>
 
-});
+</section>
 
-function processVideo(){
+<section class="section" id="workflows">
 
-if(!uploadedVideo){
+    <h1>Workflows</h1>
 
-alert("Upload a video first");
+    <div class="cards">
 
-return;
+        <div class="card">
+            <h2>Google VEO</h2>
+            <p>Complete VEO video workflow guides.</p>
+        </div>
 
-}
+        <div class="card">
+            <h2>CapCut</h2>
+            <p>Edit AI videos like a professional.</p>
+        </div>
 
-document.querySelector(".progressBox").style.display="block";
+        <div class="card">
+            <h2>Prompt Packs</h2>
+            <p>Download curated prompt collections.</p>
+        </div>
 
-setTimeout(()=>{
+    </div>
 
-const videoURL=URL.createObjectURL(uploadedVideo);
+</section>
 
-const preview=document.getElementById("preview");
+<section class="section" id="about">
 
-preview.src=videoURL;
+    <h1>About PromptFlow</h1>
 
-preview.style.display="block";
+    <p style="max-width:700px; margin:auto; line-height:1.8; color:#c5c5c5;">
+        PromptFlow.store is built for AI creators around the world.
+        Our mission is to provide free prompts, workflows, and tools
+        to help creators make viral AI videos.
+    </p>
 
-},5000);
+</section>
 
-}
-
-</script>
+<footer>
+    © 2026 PromptFlow.store
+</footer>
 
 </body>
 </html>
